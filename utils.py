@@ -27,7 +27,7 @@ def generate_random_graph(node_count=10, density=0.5,distribution='normal', mean
     edge_list = [(i+1,j+1, random_numbers[i,j]) 
                     for i in range(node_count) for j in range(node_count) 
                     if random_numbers[i,j] > 0]
-    return random_numbers, Graph(node_count, edge_list)
+    return Graph(node_count, edge_list)
 #%%
 def construct_demo_graph():
     edge_list = [(1, 2, 5),
