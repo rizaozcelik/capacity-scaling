@@ -5,7 +5,7 @@ from data_structures import Graph
 def print_path(path):
     print('Path is: ' + ' '.join([str(node.node_id) for node in path]))
 #%%
-def generate_random_graph(node_count=10, density=0.5,distribution='normal', mean=10, std=3, skewness=0):
+def construct_random_graph(node_count=10, density=0.5,distribution='normal', mean=10, std=3, skewness=0):
     edge_count = int(node_count*node_count*density)
     mask_indices = np.random.randint(low=0, high=node_count*node_count, size=edge_count)
     mask_indices = np.unravel_index(mask_indices,(node_count,node_count))
