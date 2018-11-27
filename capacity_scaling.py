@@ -1,12 +1,13 @@
 from collections import deque
 import itertools
 import copy
-import sys
+import gc
 import time
-import pickle
+import uuid
 
 from scipy.optimize import linprog
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 from gurobipy import Model, GRB, LinExpr
 
@@ -236,7 +237,7 @@ def solve_with_scipy(graph):
     b_eq = np.zeros((node_count,1))  
     # Solve the problem
     result = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq)     
-    return int(-result.fun)
+    return int(-result.fun), None, None
 #%%
 # This function converts the network flow problem to a linear programming problem
 # that is compatible with gurobi format.
@@ -280,72 +281,82 @@ def solve_with_gurobi(graph):
     
     # Just optimize and return the flow
     model.optimize()
-    return int(model.objVal)
+    return int(model.objVal), None, None
 #%%
-def run_experiments():
-    configs = [('normal',1000,50,-10),
-                          ('normal',1000,50,10),
-                          ('normal',1000,50,0),
-                          ('normal',1000,500,-10),
-                          ('normal',1000,500,10),
-                          ('normal',1000,500,0),
-                          ('normal',50,3,-10),
-                          ('normal',50,3,10),
-                          ('normal',50,3,0),
-                          ('normal',50,30,-10),
-                          ('normal',50,30,10),
-                          ('normal',50,30,0),
-                          ('uniform',1000,None,None),
-                          ('uniform',50,None,None)]
-    node_counts = [50, 150, 300]
-    densities = [0.2, 0.5, 0.8]
-    #node_counts = [50]
-    #densities = [0.2]
-    experimental_setup = list(itertools.product(node_counts, densities, configs))
+# This is a runner function that runs multiple experiments given solvers, their
+# params and configs. It saves the results to a csv.
+def run_experiments(configs, solvers, solver_params, solver_names,filename=None):
+    if not filename:
+        # If a filename is no specified, generate a random string for filename
+        filename = uuid.uuid4() + '.csv'
     
-    heapt, regt, scipyt, gurobit = [], [], [], []   
-    heap_Deltas, heap_deltas, reg_Deltas, reg_deltas = [], [], [], []
-    for setup in tqdm(experimental_setup):
-        node_count, density, configs = setup
-        distribution, mean, std, skewness = configs
-        graph = generate_random_graph(node_count=node_count, density=density,   
-                                      distribution=distribution,mean=mean,
+    # A flag that will be used to stop experimenting when mismatched results are 
+    # found
+    mismatched_result = False
+    desired_statistics = []
+    col_names = ['name', 'node_count','density', 'distribution_name', 'mean',
+                 'std', 'skewness', 'execution_time', 'Deltas', 'deltas']
+    # Each config has a format (node count, density, stats) where stats in another
+    # tuple that contains distrubution name, mean, std, skewness.
+    for config in tqdm(configs):
+        node_count, density, statistical_params = config
+        distribution_name, mean, std, skewness = statistical_params
+        graph = construct_random_graph(node_count=node_count, density=density,   
+                                      distribution=distribution_name,mean=mean,
                                       std=std,skewness=skewness)
-    
-        t0 = time.time()
-        heap_res, heap_Delta, heap_delta = \
-        solve_with_capacity_scaling(copy.deepcopy(graph), use_heap=True)
-        t1 = time.time()
-        heapt.append(t1 - t0)
-        heap_Deltas.append(heap_Delta)
-        heap_deltas.append(heap_delta)    
-        
-        reg_res, reg_Delta, reg_delta = \
-        solve_with_capacity_scaling(copy.deepcopy(graph))
-        t2 = time.time()
-        regt.append(t2 - t1)
-        reg_Deltas.append(reg_Delta)
-        reg_deltas.append(reg_delta)    
-        
-        lin_res = solve_with_scipy(copy.deepcopy(graph))
-        t3 = time.time()
-        scipyt.append(t3 - t2)
-        
-        gurobi_res = solve_with_gurobi(copy.deepcopy(graph))
-        t4 = time.time()
-        gurobit.append(t4 - t3)
-        
-        if not(gurobi_res == reg_res == heap_res == lin_res):
-            print('ups')
+        results = []
+        if not mismatched_result:
+            for solver,params, name in zip(solvers, solver_params, solver_names):
+                gc.collect()
+                try:
+                    start = time.time()
+                    result, Deltas, deltas = solver(copy.deepcopy(graph),**params)
+                    end = time.time()
+                    execution_time = end - start
+                    desired_statistics.append([name, node_count, density, 
+                                               distribution_name, mean, std, skewness,
+                                               execution_time, Deltas, deltas])
+                    results.append(result)
+                except:
+                    desired_statistics.append([name, node_count, density, 
+                                               distribution_name, mean, std, skewness,
+                                               'ERROR', 'ERROR', 'ERROR'])
+            if len(set(results)) != 1:
+                mismatched_result = True
+                print('Wrong result')
+        else:
             break
-    
-    all_vars = {'heapt': heapt, 'regt': regt, 'scipyt': scipyt, 'gurobit': gurobit,
-                'heap_Deltas': heap_Deltas, 'heap_deltas': heap_deltas, 
-                'reg_Deltas': reg_Deltas, 'reg_deltas': reg_deltas}
-    pickle.dump(all_vars, open('all_vars.pkl','wb'))
+    # Put desired statistics to a df and name the columns.
+    df = pd.DataFrame(desired_statistics)
+    df.columns = col_names
+    df.to_csv(filename,sep='|')
+    return df
+
 #%%
-graph = construct_random_graph()
-print(solve_with_capacity_scaling(copy.deepcopy(graph),use_bfs=False)[0])
-print(solve_with_capacity_scaling(copy.deepcopy(graph), use_heap=True,use_bfs=False)[0])
-print(solve_with_gurobi(copy.deepcopy(graph)))
-print(solve_with_scipy(copy.deepcopy(graph)))
+statitical_params = [('normal',1000,50,-10),
+          ('normal',1000,50,10),
+          ('normal',1000,50,0),
+          ('normal',1000,500,-10),
+          ('normal',1000,500,10),
+          ('normal',1000,500,0),
+          ('normal',50,3,-10),
+          ('normal',50,3,10),
+          ('normal',50,3,0),
+          ('normal',50,30,-10),
+          ('normal',50,30,10),
+          ('normal',50,30,0),
+          ('uniform',1000,None,None),
+          ('uniform',50,None,None)]
+node_counts = [50, 150, 300]
+densities = [0.2, 0.5, 0.8]
+#node_counts = [50]
+#densities = [0.2]
+configs = list(itertools.product(node_counts, densities, statitical_params))
+#%%
+solvers = [solve_with_capacity_scaling,solve_with_capacity_scaling,
+           solve_with_capacity_scaling,solve_with_gurobi, solve_with_scipy]
+solver_params = [{'use_bfs':True}, {'use_bfs':False}, {'use_heap':True , 
+                 'use_bfs': True},{},{}]
+solver_names = ['cs_bfs', 'cs_dfs','cs_heap', 'gurobi','scipy']
+df = run_experiments(configs, solvers, solver_params, solver_names,
+                     filename='experiment1.csv')
