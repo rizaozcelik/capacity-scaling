@@ -7,7 +7,6 @@ import uuid
 
 from scipy.optimize import linprog
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 from gurobipy import Model, GRB, LinExpr
 
@@ -285,19 +284,22 @@ def solve_with_gurobi(graph):
 #%%
 # This is a runner function that runs multiple experiments given solvers, their
 # params and configs. It saves the results to a csv.
-def run_experiments(configs, solvers, solver_params, solver_names,filename=None):
+def run_experiments(configs, solvers, solver_params, solver_names,
+                    filename=None, save_frequency=1):
     if not filename:
         # If a filename is no specified, generate a random string for filename
         filename = uuid.uuid4() + '.csv'
-    
+    write_file = open(filename, 'w')
     # A flag that will be used to stop experimenting when mismatched results are 
     # found
     mismatched_result = False
-    desired_statistics = []
-    col_names = ['name', 'node_count','density', 'distribution_name', 'mean',
+#    desired_statistics = []
+    col_names = ['iter','name', 'node_count','density', 'distribution_name', 'mean',
                  'std', 'skewness', 'execution_time', 'Deltas', 'deltas']
+    write_file.write('|'.join(col_names) + '\n')
     # Each config has a format (node count, density, stats) where stats in another
     # tuple that contains distrubution name, mean, std, skewness.
+    iter_count = -1
     for config in tqdm(configs):
         node_count, density, statistical_params = config
         distribution_name, mean, std, skewness = statistical_params
@@ -306,6 +308,7 @@ def run_experiments(configs, solvers, solver_params, solver_names,filename=None)
                                       std=std,skewness=skewness)
         results = []
         if not mismatched_result:
+            iter_count = iter_count + 1
             for solver,params, name in zip(solvers, solver_params, solver_names):
                 gc.collect()
                 try:
@@ -313,27 +316,31 @@ def run_experiments(configs, solvers, solver_params, solver_names,filename=None)
                     result, Deltas, deltas = solver(copy.deepcopy(graph),**params)
                     end = time.time()
                     execution_time = end - start
-                    desired_statistics.append([name, node_count, density, 
-                                               distribution_name, mean, std, skewness,
-                                               execution_time, Deltas, deltas])
+                    #desired_statistics.append([name, node_count, density, 
+                    #                           distribution_name, mean, std, skewness,
+                    #                           execution_time, Deltas, deltas])
+                    desired_statistics = [iter_count, name, node_count, density,
+                                          distribution_name, mean, std, skewness,
+                                          execution_time, Deltas, deltas]
+                    
                     results.append(result)
                 except:
-                    desired_statistics.append([name, node_count, density, 
-                                               distribution_name, mean, std, skewness,
-                                               'ERROR', 'ERROR', 'ERROR'])
+                    desired_statistics = [iter_count, name, node_count, density, 
+                                          distribution_name, mean, std, skewness,
+                                          'ERROR', 'ERROR', 'ERROR']
+                if iter_count % save_frequency == 0:
+                    desired_statistics = [str(stat) for stat in desired_statistics]
+                    write_file.write('|'.join(desired_statistics) + '\n')
             if len(set(results)) != 1:
                 mismatched_result = True
                 print('Wrong result')
         else:
             break
-    # Put desired statistics to a df and name the columns.
-    df = pd.DataFrame(desired_statistics)
-    df.columns = col_names
-    df.to_csv(filename,sep='|')
-    return df
+
+    write_file.close()
 
 #%%
-statitical_params = [('normal',1000,50,-10),
+statistical_params = [('normal',1000,50,-10),
           ('normal',1000,50,10),
           ('normal',1000,50,0),
           ('normal',1000,500,-10),
@@ -349,9 +356,11 @@ statitical_params = [('normal',1000,50,-10),
           ('uniform',50,None,None)]
 node_counts = [50, 150, 300]
 densities = [0.2, 0.5, 0.8]
-#node_counts = [50]
+# These are demo configs
+#node_counts = [10]
 #densities = [0.2]
-configs = list(itertools.product(node_counts, densities, statitical_params))
+#statistical_params = statistical_params[:4]
+configs = list(itertools.product(node_counts, densities, statistical_params))
 #%%
 solvers = [solve_with_capacity_scaling,solve_with_capacity_scaling,
            solve_with_capacity_scaling,solve_with_gurobi, solve_with_scipy]
