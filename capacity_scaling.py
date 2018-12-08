@@ -343,7 +343,7 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
             break
 
 #%%
-config_path = './experiments/configs/experiment3_cs_vs_gurobi.json'
+config_path = './experiments/configs/experiment4_heap_vs_noheap.json'
 run_experiments(*parse_experiment_setup(config_path))
 
 
