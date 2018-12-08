@@ -343,10 +343,12 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
             break
 
 #%%
-config_path = './experiments/configs/experiment5_c_comparison.json'
-run_experiments(*parse_experiment_setup(config_path))
-
-
+def main():
+    config_path = './experiments/configs/experiment5_c_comparison.json'
+    run_experiments(*parse_experiment_setup(config_path))
+#%%
+if __name__ == '__main__':
+    main()
 
 
 
