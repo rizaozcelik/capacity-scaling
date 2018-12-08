@@ -359,11 +359,9 @@ def run_experiments(configs, solvers, solver_params, solver_names,
 #          ('normal',50,30,0),
 #          ('uniform',1000,None,None),
 #          ('uniform',50,None,None)]
-statistical_params = [('normal',50,30,-10),
-                      ('normal',50,30,10),
-                      ('normal',50,30,0)]
-node_counts = [25, 50, 100, 150, 200, 250, 300]
-densities = [0.2, 0.4, 0.5, 0.6, 0.8]
+statistical_params = [('normal',50,30,0)]
+node_counts = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350]
+densities = [0.2, 0.5, 0.8]
 # These are demo configs
 #node_counts = [10]
 #densities = [0.2]
@@ -372,11 +370,11 @@ configs = list(itertools.product(node_counts, densities, statistical_params))
 #%%
 #solvers = [solve_with_capacity_scaling,solve_with_capacity_scaling,
 #           solve_with_capacity_scaling,solve_with_gurobi, solve_with_scipy]
-solvers = [solve_with_capacity_scaling,solve_with_capacity_scaling]
+solvers = [solve_with_capacity_scaling,solve_with_gurobi]
 #solver_params = [{'use_bfs':True}, {'use_bfs':False}, {'use_heap':True , 
 #                 'use_bfs': True},{},{}]
-solver_params = [{'use_bfs':True}, {'use_bfs':False}] 
+solver_params = [{'use_bfs':True}, {}] 
 #solver_names = ['cs_bfs', 'cs_dfs','cs_heap', 'gurobi','scipy']
-solver_names = ['cs_bfs', 'cs_dfs']
+solver_names = ['cs_bfs', 'gurobi']
 run_experiments(configs, solvers, solver_params, solver_names,
-                     filename='experiment2_bfs_vs_dfs.csv')
+                     filename='experiment3_cs_vs_gurobi.csv')
