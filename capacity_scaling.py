@@ -1,5 +1,4 @@
 from collections import deque
-import itertools
 import copy
 import gc
 import time
@@ -8,9 +7,9 @@ import uuid
 from scipy.optimize import linprog
 import numpy as np
 from tqdm import tqdm
-from gurobipy import Model, GRB, LinExpr
 
-from utils import construct_random_graph
+from gurobipy import Model, GRB, LinExpr
+from utils import construct_random_graph, parse_experiment_setup
 #%%
 # This function finds a path from source to target but it is not written in
 # good shape. This why it is rewritten. Thus, it is obsolete.
@@ -283,8 +282,8 @@ def solve_with_gurobi(graph):
     return int(model.objVal), None, None
 #%%
 # This is a runner function that runs multiple experiments given solvers, their
-# params and configs. It saves the results to a csv.
-def run_experiments(configs, solvers, solver_params, solver_names,
+# params and graph_configs. It saves the results to a csv.
+def run_experiments(graph_configs, solvers, solver_params, solver_names,
                     filename=None, save_frequency=1):
     if not (len(solvers) == len(solver_params) == len(solver_names)):
         print('Error in params!')
@@ -304,7 +303,7 @@ def run_experiments(configs, solvers, solver_params, solver_names,
     # Each config has a format (node count, density, stats) where stats in another
     # tuple that contains distrubution name, mean, std, skewness.
     iter_count = -1
-    for config in tqdm(configs):
+    for config in tqdm(graph_configs):
         node_count, density, statistical_params = config
         distribution_name, mean, std, skewness = statistical_params
         graph = construct_random_graph(node_count=node_count, density=density,   
@@ -343,38 +342,11 @@ def run_experiments(configs, solvers, solver_params, solver_names,
         else:
             break
 
+#%%
+config_path = './experiments/configs/experiment3_cs_vs_gurobi.json'
+run_experiments(*parse_experiment_setup(config_path))
 
-#%%
-#statistical_params = [('normal',1000,50,-10),
-#          ('normal',1000,50,10),
-#          ('normal',1000,50,0),
-#          ('normal',1000,500,-10),
-#          ('normal',1000,500,10),
-#          ('normal',1000,500,0),
-#          ('normal',50,3,-10),
-#          ('normal',50,3,10),
-#          ('normal',50,3,0),
-#          ('normal',50,30,-10),
-#          ('normal',50,30,10),
-#          ('normal',50,30,0),
-#          ('uniform',1000,None,None),
-#          ('uniform',50,None,None)]
-statistical_params = [('normal',50,30,0)]
-node_counts = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350]
-densities = [0.2, 0.5, 0.8]
-# These are demo configs
-#node_counts = [10]
-#densities = [0.2]
-#statistical_params = statistical_params[:4]
-configs = list(itertools.product(node_counts, densities, statistical_params))
-#%%
-#solvers = [solve_with_capacity_scaling,solve_with_capacity_scaling,
-#           solve_with_capacity_scaling,solve_with_gurobi, solve_with_scipy]
-solvers = [solve_with_capacity_scaling,solve_with_gurobi]
-#solver_params = [{'use_bfs':True}, {'use_bfs':False}, {'use_heap':True , 
-#                 'use_bfs': True},{},{}]
-solver_params = [{'use_bfs':True}, {}] 
-#solver_names = ['cs_bfs', 'cs_dfs','cs_heap', 'gurobi','scipy']
-solver_names = ['cs_bfs', 'gurobi']
-run_experiments(configs, solvers, solver_params, solver_names,
-                     filename='experiment3_cs_vs_gurobi.csv')
+
+
+
+

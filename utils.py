@@ -1,6 +1,11 @@
+import json
+import itertools
+
 import numpy as np
 from scipy.stats import skewnorm
+
 from data_structures import Graph
+
 #%%
 def print_path(path):
     print('Path is: ' + ' '.join([str(node.node_id) for node in path]))
@@ -45,3 +50,22 @@ def construct_demo_graph():
     graph = Graph(6, edge_list)
     
     return graph
+#%%
+def parse_experiment_setup(experiment_setup_filepath):
+    import capacity_scaling
+
+    js = json.load(open(experiment_setup_filepath,'r'))
+    statistical_params = js['statistical_params']
+    node_counts = js['node_counts']
+    densities = js['densities']
+    solvers = js['solvers']
+    solvers = [getattr(capacity_scaling,solver) for solver in solvers]
+    solver_params = js['solver_params']
+    solver_names = js['solver_names']
+    experiment_name = js['write_filepath']
+    graph_configs = list(itertools.product(node_counts, densities, 
+                                           statistical_params))
+    return graph_configs, solvers, solver_params, solver_names, experiment_name
+
+
+    

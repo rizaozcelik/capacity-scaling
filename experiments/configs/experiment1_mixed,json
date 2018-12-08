@@ -1,0 +1,30 @@
+{
+	"solvers": ["solve_with_capacity_scaling", "solve_with_capacity_scaling", "solve_with_capacity_scaling", "solve_with_gurobi", "solve_with_scipy"],
+	"solver_params":[
+						{"use_bfs":true}, 
+						{"use_bfs":false}, 
+						{"use_heap":true ,
+						"use_bfs": true},
+						{},
+						{}
+					],
+	"solver_names": ["cs_bfs", "cs_dfs","cs_heap", "gurobi","scipy"],
+	"node_counts": [50, 150, 300],
+	"densities": [0.2, 0.5, 0.8],
+	"statistical_params":[
+							  ["normal",1000,50,-10],
+					          ["normal",1000,50,10],
+					          ["normal",1000,50,0],
+					          ["normal",1000,500,-10],
+					          ["normal",1000,500,10],
+					          ["normal",1000,500,0],
+					          ["normal",50,3,-10],
+					          ["normal",50,3,10],
+					          ["normal",50,3,0],
+					          ["normal",50,30,-10],
+					          ["normal",50,30,10],
+					          ["normal",50,30,0],
+					          ["uniform",1000,null,null],
+					          ["uniform",50,null,null]
+				          ],
+	"write_filepath": "./experiments/results/experiment1.csv"}

@@ -1,0 +1,11 @@
+{
+	"solvers": ["solve_with_capacity_scaling", "solve_with_gurobi"],
+	"solver_params":[{"use_bfs":true}, {}],
+	"solver_names": ["cs_bfs", "gurobi"],
+	"node_counts": [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350],
+	"densities": [0.2, 0.5, 0.8],
+	"statistical_params":[
+							["normal",50,30,0]
+						 ],
+	"write_filepath": "./experiments/results/experiment3_cs_vs_gurobi.csv"
+}
