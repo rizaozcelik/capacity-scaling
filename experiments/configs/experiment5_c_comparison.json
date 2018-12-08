@@ -1,0 +1,18 @@
+{
+	"solvers": ["solve_with_capacity_scaling"],
+	"solver_params":[{"use_bfs":true}],
+	"solver_names": ["cs_"],
+	"node_counts": [50, 150, 300],
+	"densities": [0.8],
+	"statistical_params":[
+							  ["uniform",800,null,null],
+							  ["uniform",700,null,null],
+							  ["uniform",600,null,null],
+							  ["uniform",500,null,null],
+							  ["uniform",400,null,null],
+							  ["uniform",300,null,null],
+							  ["uniform",200,null,null],
+					          ["uniform",100,null,null],
+					          ["uniform",50,null,null]
+				          ],
+	"write_filepath": "./experiments/results/experiment5_c_comparison.csv"}
