@@ -54,7 +54,10 @@ class Graph:
     def __getitem__(self, index):
         return self.node_list[index]
     
-        
+    def copy(self):
+        node_count = len(self.node_list)
+        edge_list_copy = self.edge_list.copy()
+        return Graph(node_count, edge_list_copy)
         
         
         

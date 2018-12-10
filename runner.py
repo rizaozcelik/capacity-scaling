@@ -39,7 +39,7 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                 gc.collect()
                 try:
                     start = time.time()
-                    result, Deltas, deltas = solver(graph,**params)
+                    result, Deltas, deltas = solver(graph.copy(),**params)
                     end = time.time()
                     execution_time = end - start
                     desired_statistics = [iter_count, name, node_count, density,
@@ -64,7 +64,7 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
 
 #%%
 def main():
-    config_path = './experiments/configs/experiment1_mixed.json'
+    config_path = './experiments/configs/experiment2_bfs_vs_dfs.json'
     run_experiments(*parse_experiment_setup(config_path))
 #%%
 if __name__ == '__main__':
