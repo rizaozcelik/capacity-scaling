@@ -5,6 +5,8 @@ import numpy as np
 from scipy.stats import skewnorm
 
 from data_structures import Graph
+from capacity_scaling import solve_with_capacity_scaling
+from lp_solvers import solve_with_gurobi, solve_with_scipy
   
 #%%
 def print_path(path):
@@ -52,9 +54,6 @@ def construct_demo_graph():
     return graph
 #%%
 def parse_experiment_setup(experiment_setup_filepath):
-    from capacity_scaling import solve_with_capacity_scaling, \
-                            solve_with_gurobi, solve_with_scipy
-  
     function_mappings = {'solve_with_capacity_scaling': solve_with_capacity_scaling,
                          'solve_with_gurobi': solve_with_gurobi,
                          'solve_with_scipy': solve_with_scipy}
