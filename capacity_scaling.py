@@ -2,7 +2,6 @@ from collections import deque
 import copy
 import gc
 import time
-import uuid
 
 from scipy.optimize import linprog
 import numpy as np
@@ -289,9 +288,6 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
         print('Error in params!')
         return
     
-    if not filename:
-        # If a filename is no specified, generate a random string for filename
-        filename = uuid.uuid4() + '.csv'
     with open(filename, 'w') as write_file:
         col_names = ['iter','name', 'node_count','density', 'distribution_name', 
                 'mean', 'std', 'skewness', 'execution_time', 'Deltas', 'deltas']
@@ -316,7 +312,9 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                 gc.collect()
                 try:
                     start = time.time()
-                    result, Deltas, deltas = solver(copy.deepcopy(graph),**params)
+#                    print('here')
+                    result, Deltas, deltas = solver(graph,**params)
+#                    print('not here')
                     end = time.time()
                     execution_time = end - start
                     #desired_statistics.append([name, node_count, density, 
@@ -327,7 +325,8 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                                           execution_time, Deltas, deltas]
                     
                     results.append(result)
-                except:
+                except Exception as e:
+                    #print(e)
                     desired_statistics = [iter_count, name, node_count, density, 
                                           distribution_name, mean, std, skewness,
                                           'ERROR', 'ERROR', 'ERROR']
@@ -338,13 +337,13 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                     write_file.close()
             if len(set(results)) != 1:
                 mismatched_result = True
-                print('Wrong result')
+                print('Incompatible result. Results are:', results)
         else:
             break
 
 #%%
 def main():
-    config_path = './experiments/configs/experiment5_c_comparison.json'
+    config_path = './experiments/configs/experiment2_bfs_vs_dfs.json'
     run_experiments(*parse_experiment_setup(config_path))
 #%%
 if __name__ == '__main__':

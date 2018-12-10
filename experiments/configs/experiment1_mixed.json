@@ -3,12 +3,11 @@
 	"solver_params":[
 						{"use_bfs":true}, 
 						{"use_bfs":false}, 
-						{"use_heap":true ,
-						"use_bfs": true},
+						{"use_heap":true},
 						{},
 						{}
 					],
-	"solver_names": ["cs_bfs", "cs_dfs","cs_heap", "gurobi","scipy"],
+	"solver_names": ["cs_bfs", "cs_dfs", "cs_heap", "gurobi", "scipy"],
 	"node_counts": [50, 150, 300],
 	"densities": [0.2, 0.5, 0.8],
 	"statistical_params":[
