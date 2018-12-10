@@ -48,6 +48,7 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                     
                     results.append(result)
                 except Exception as e:
+                    print(e)
                     desired_statistics = [iter_count, name, node_count, density, 
                                           distribution_name, mean, std, skewness,
                                           'ERROR', 'ERROR', 'ERROR']
@@ -61,11 +62,16 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                 print('Incompatible result. Results are:', results)
         else:
             break
-
 #%%
 def main():
-    config_path = './experiments/configs/experiment2_bfs_vs_dfs.json'
-    run_experiments(*parse_experiment_setup(config_path))
+    files = ['./experiments/configs/experiment2_bfs_vs_dfs.json',
+             './experiments/configs/experiment5_c_comparison.json',
+             './experiments/configs/experiment4_heap_vs_noheap.json',
+             './experiments/configs/experiment3_cs_vs_gurobi.json',
+             './experiments/configs/experiment1_mixed.json']
+    for f in files:
+        run_experiments(*parse_experiment_setup(f))
+        print('done', f)
 #%%
 if __name__ == '__main__':
     main()

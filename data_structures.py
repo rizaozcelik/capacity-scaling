@@ -55,7 +55,7 @@ class Graph:
         return self.node_list[index]
     
     def copy(self):
-        node_count = len(self.node_list)
+        node_count = len(self.node_list) - 1
         edge_list_copy = self.edge_list.copy()
         return Graph(node_count, edge_list_copy)
         

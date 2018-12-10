@@ -70,7 +70,6 @@ def find_path_from_source_to_target(graph, Delta, use_bfs=True):
     is_marked[1] = True # set source as visited
     # Track where any node is reached from
     where_path_came_from = {node: source_node for node in linked_list}
-    
     path_found = False
     while linked_list and not path_found:
         if use_bfs:
