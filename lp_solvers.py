@@ -1,5 +1,7 @@
+import numpy as np
 from scipy.optimize import linprog
 from gurobipy import Model, GRB, LinExpr
+
 #%%
 # This function converts the network flow problem to a linear programming problem
 # that is compatible with scipy's linprog format.
