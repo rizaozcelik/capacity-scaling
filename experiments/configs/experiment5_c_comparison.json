@@ -3,7 +3,7 @@
 	"solver_params":[{"use_bfs":true}],
 	"solver_names": ["cs"],
 	"node_counts": [300],
-	"densities": [0.5],
+	"sparsities": [0.5],
 	"statistical_params":[
 							  ["uniform",2000,null,null],
 							  ["uniform",1900,null,null],

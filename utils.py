@@ -12,9 +12,9 @@ from lp_solvers import solve_with_gurobi, solve_with_scipy
 def print_path(path):
     print('Path is: ' + ' '.join([str(node.node_id) for node in path]))
 #%%
-def construct_random_graph(node_count=10, density=0.5,distribution='normal', mean=10, std=3, skewness=0):
-    edge_count = int(node_count*node_count*density)
-    mask_indices = np.random.randint(low=0, high=node_count*node_count, size=edge_count)
+def construct_random_graph(node_count=10, sparsity=0.5, distribution='normal', mean=10, std=3, skewness=0):
+    mask_count = int(node_count*node_count*sparsity)
+    mask_indices = np.random.randint(low=0, high=node_count*node_count, size=mask_count)
     mask_indices = np.unravel_index(mask_indices,(node_count,node_count))
     
     if distribution == 'normal':
@@ -60,13 +60,13 @@ def parse_experiment_setup(experiment_setup_filepath):
     js = json.load(open(experiment_setup_filepath,'r'))
     statistical_params = js['statistical_params']
     node_counts = js['node_counts']
-    densities = js['densities']
+    sparsities = js['sparsities']
     solvers = js['solvers']
     solvers = [function_mappings[solver] for solver in solvers]
     solver_params = js['solver_params']
     solver_names = js['solver_names']
     experiment_name = js['write_filepath']
-    graph_configs = list(itertools.product(node_counts, densities, 
+    graph_configs = list(itertools.product(node_counts, sparsities, 
                                            statistical_params))
     return graph_configs, solvers, solver_params, solver_names, experiment_name
 

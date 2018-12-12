@@ -16,20 +16,20 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
         return
     
     with open(filename, 'w') as write_file:
-        col_names = ['iter','name', 'node_count','density', 'distribution_name', 
+        col_names = ['iter','name', 'node_count','sparsity', 'distribution_name', 
                 'mean', 'std', 'skewness', 'execution_time', 'Deltas', 'deltas']
         write_file.write('|'.join(col_names) + '\n')
 
     # A flag that will be used to stop experimenting when mismatched results are 
     # found
     mismatched_result = False
-    # Each config has a format (node count, density, stats) where stats in another
+    # Each config has a format (node count, sparsity, stats) where stats in another
     # tuple that contains distrubution name, mean, std, skewness.
     iter_count = -1
     for config in tqdm(graph_configs):
-        node_count, density, statistical_params = config
+        node_count, sparsity, statistical_params = config
         distribution_name, mean, std, skewness = statistical_params
-        graph = construct_random_graph(node_count=node_count, density=density,   
+        graph = construct_random_graph(node_count=node_count, sparsity=sparsity,   
                                       distribution=distribution_name,mean=mean,
                                       std=std,skewness=skewness)
         results = []
@@ -42,14 +42,14 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
                     result, Deltas, deltas = solver(graph.copy(),**params)
                     end = time.time()
                     execution_time = end - start
-                    desired_statistics = [iter_count, name, node_count, density,
+                    desired_statistics = [iter_count, name, node_count, sparsity,
                                           distribution_name, mean, std, skewness,
                                           execution_time, Deltas, deltas]
                     
                     results.append(result)
                 except Exception as e:
                     print(e)
-                    desired_statistics = [iter_count, name, node_count, density, 
+                    desired_statistics = [iter_count, name, node_count, sparsity, 
                                           distribution_name, mean, std, skewness,
                                           'ERROR', 'ERROR', 'ERROR']
                 if iter_count % save_frequency == 0:
