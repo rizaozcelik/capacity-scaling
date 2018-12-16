@@ -1,1 +1,10 @@
-requirements.txt
+numpy
+pandas
+scipy
+matplotlib
+qgrid
+ipywidgets
+seaborn
+heapdict
+tqdm
+gurobipy
