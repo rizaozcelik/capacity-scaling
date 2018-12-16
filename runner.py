@@ -64,11 +64,12 @@ def run_experiments(graph_configs, solvers, solver_params, solver_names,
             break
 #%%
 def main():
-    files = ['./experiments/configs/experiment2_bfs_vs_dfs.json',
-             './experiments/configs/experiment5_c_comparison.json',
-             './experiments/configs/experiment4_heap_vs_noheap.json',
-             './experiments/configs/experiment3_cs_vs_gurobi.json',
-             './experiments/configs/experiment1_mixed.json']
+#    files = ['./experiments/configs/experiment2_bfs_vs_dfs.json',
+#             './experiments/configs/experiment5_c_comparison.json',
+#             './experiments/configs/experiment4_heap_vs_noheap.json',
+#             './experiments/configs/experiment3_cs_vs_gurobi.json',
+#             './experiments/configs/experiment1_mixed.json']
+    files = ['./experiments/configs/test_ride.json']
     for f in files:
         run_experiments(*parse_experiment_setup(f))
         print('done', f)

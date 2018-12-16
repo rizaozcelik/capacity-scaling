@@ -2,64 +2,10 @@ from collections import deque
 import copy
 import numpy as np
 #%%
-# This function finds a path from source to target but it is not written in
-# good shape. This why it is rewritten. Thus, it is obsolete.
-def old_path_finder(graph, Delta):
-    source_node, target_node = graph[1], graph[-1]
-    # start from the source node's neighbors
-    stack = set(source_node.get_adjacent_nodes(Delta))
-    # instead of a queue we use set, which does not allow multiple occurences
-    marked_nodes = set()
-    
-    # dictionary to store path
-    incoming_nodes = {}
-    for node in stack:
-        incoming_nodes[node] = source_node    
-    path_found = False
-    # Continue iterations until no node is left or a path is found
-    while len(stack) > 0 and not path_found:
-        # pop a random node from the set. Thus, the algorithm is not BFS or DFS.
-        next_node = stack.pop()
-        # If it is marked/visited before, just skip
-        if next_node in marked_nodes:
-            continue
-        # set the node as visited        
-        marked_nodes.add(next_node)
-        # get adjacent nodes and process them
-        discovered_nodes = next_node.get_adjacent_nodes(Delta)
-        for node in discovered_nodes:
-            # no need to check if the discovered node is added to stack before.
-            # set will handle thae case.
-            stack.add(node)
-            # if a path to a new node is found, update it.
-            if node not in incoming_nodes:
-                incoming_nodes[node] = next_node
-            # if a path to target is found, just mark the flag and exit.
-            if node.node_id == target_node.node_id:
-                path_found = True
-    
-    # Keep backtracking for augmentation until source is reached.
-    if path_found:
-        incoming_node = incoming_nodes[target_node]
-        path = [target_node, incoming_node]
-        delta = incoming_node.adjacency_map[target_node]
-        while incoming_node != source_node:
-            prev_incoming_node = incoming_node
-            incoming_node = incoming_nodes[incoming_node]
-            path.append(incoming_node)
-            delta = min(delta,incoming_node.
-                        adjacency_map[prev_incoming_node])
-        
-    
-        path.reverse()
-        return path, delta
-    return False, False
-#%%
-# This function finds a path from source to target and a modified version of the
-# above one. It supports both DFS and BFS by a flag. Note that during the search,
-# edges that have capacity below Delta is ignored to realize capacity scaling.
-# So, neighbor of a node is defined as nodes that are connected with an arc larger
-# Delta capacity
+# This function finds a path from source to target It supports both DFS and BFS 
+# by a flag. Note that during the search, edges that have capacity below Delta 
+# is ignored to realize capacity scaling. So, neighbors of a node is defined as 
+# nodes that are connected with an arc larger than Delta capacity.
 def find_path_from_source_to_target(graph, Delta, use_bfs=True):
     source_node, target_node = graph[1], graph[-1]
     # Put all neighbors of the source to start searching

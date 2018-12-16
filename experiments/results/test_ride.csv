@@ -1,0 +1,6 @@
+iter|name|node_count|sparsity|distribution_name|mean|std|skewness|execution_time|Deltas|deltas
+0|cs_bfs|20|0.8|uniform|50|None|None|0.002185344696044922|[16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 8, 8, 4, 2, 1]|[21.0, 35.0, 19.0, 39.0, 37.0, 60.0, 43.0, 29.0, 17.0, False, 12.0, False, False, False, False]
+0|cs_dfs|20|0.8|uniform|50|None|None|0.0|[16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 8, 8, 8, 4, 2, 2, 1]|[43.0, 21.0, 17.0, 17.0, 29.0, 25.0, 22.0, 48.0, 29.0, 19.0, 18.0, False, 13.0, 8.0, False, False, 3.0, False, False]
+0|cs_heap|20|0.8|uniform|50|None|None|0.015670299530029297|[16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 10, 10, 3, 1]|[21.0, 35.0, 19.0, 39.0, 37.0, 60.0, 43.0, 29.0, 17.0, False, 12.0, False, False, False]
+0|gurobi|20|0.8|uniform|50|None|None|0.11656475067138672|None|None
+0|scipy|20|0.8|uniform|50|None|None|0.05080771446228027|None|None

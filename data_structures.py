@@ -5,19 +5,13 @@ class Edge:
     def __init__(self, incoming_node, outgoing_node, capacity):
         self.incoming_node = incoming_node
         self.outgoing_node = outgoing_node
-        self.initial_capacity = capacity
-        self.ongoing_flow = 0
-        self.remaining_capacity = capacity
+        self.capacity = capacity
         
     def __lt__(self, other):
         self.capacity < other.capacity
         
     def __str__(self):
         return str(self.incoming_node) + ' ' + str(self.outgoing_node) + ' ' +               str(self.capacity)
-        
-    def augment(self, delta):
-        self.remaining_capacity = self.remaining_capacity - delta
-        self.ongoing_flow = self.ongoing_flow + delta
     
 class Node:
     
@@ -31,7 +25,7 @@ class Node:
     
     def add_edge(self, e):
         if e.incoming_node.node_id == self.node_id:
-            self.adjacency_map[e.outgoing_node] = e.initial_capacity
+            self.adjacency_map[e.outgoing_node] = e.capacity
         else:
             print('Error in adding edge')
     

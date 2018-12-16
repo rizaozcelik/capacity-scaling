@@ -9,10 +9,15 @@ from capacity_scaling import solve_with_capacity_scaling
 from lp_solvers import solve_with_gurobi, solve_with_scipy
   
 #%%
+# Just a pretty print function
 def print_path(path):
     print('Path is: ' + ' '.join([str(node.node_id) for node in path]))
 #%%
-def construct_random_graph(node_count=10, sparsity=0.5, distribution='normal', mean=10, std=3, skewness=0):
+# This function is used to generate a random graph with the provided parameters
+# It is heavily used for experiments.
+def construct_random_graph(node_count=10, sparsity=0.5, distribution='normal', 
+                           mean=10, std=3, skewness=0):
+    # Compute how many edge to mask and randomly generate their indices
     mask_count = int(node_count*node_count*sparsity)
     mask_indices = np.random.randint(low=0, high=node_count*node_count, size=mask_count)
     mask_indices = np.unravel_index(mask_indices,(node_count,node_count))
@@ -28,7 +33,7 @@ def construct_random_graph(node_count=10, sparsity=0.5, distribution='normal', m
     random_numbers[mask_indices] = 0
     # remove self loops
     np.fill_diagonal(random_numbers, 0)
-    # mask source and target edges
+    # mask incoming source and outgoing target arcs
     random_numbers[-1,:], random_numbers[:,0] = 0, 0
     random_numbers = np.floor(random_numbers)
     edge_list = [(i+1,j+1, random_numbers[i,j]) 
@@ -36,6 +41,7 @@ def construct_random_graph(node_count=10, sparsity=0.5, distribution='normal', m
                     if random_numbers[i,j] > 0]
     return Graph(node_count, edge_list)
 #%%
+# Create a simple demo graph to ease the debugging.
 def construct_demo_graph():
     edge_list = [(1, 2, 5),
                  (1, 3, 8),
@@ -53,6 +59,8 @@ def construct_demo_graph():
     
     return graph
 #%%
+# A helper function to read the experimental setup in JSON format and create
+# necessary parameters.
 def parse_experiment_setup(experiment_setup_filepath):
     function_mappings = {'solve_with_capacity_scaling': solve_with_capacity_scaling,
                          'solve_with_gurobi': solve_with_gurobi,

@@ -1,0 +1,14 @@
+{
+	"solvers": ["solve_with_capacity_scaling", "solve_with_capacity_scaling", "solve_with_capacity_scaling", "solve_with_gurobi", "solve_with_scipy"],
+	"solver_params":[
+						{"use_bfs":true}, 
+						{"use_bfs":false}, 
+						{"use_heap":true},
+						{},
+						{}
+					],
+	"solver_names": ["cs_bfs", "cs_dfs", "cs_heap", "gurobi", "scipy"],
+	"node_counts": [20],
+	"sparsities": [0.8],
+	"statistical_params":[["uniform",50,null,null]],
+	"write_filepath": "./experiments/results/test_ride.csv"}
