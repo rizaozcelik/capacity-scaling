@@ -4,7 +4,7 @@ import time
 from tqdm import tqdm
 from utils import construct_random_graph, parse_experiment_setup
 
-from capacity_scaling import solve_with_capacity_scaling
+from capacity_scaling import solve_with_capacity_scaling, solve_with_ford_fulkerson
 from lp_solvers import solve_with_gurobi, solve_with_scipy
 #%%
 # This is a runner function that runs multiple experiments given solvers, their
@@ -69,7 +69,9 @@ def main():
 #             './experiments/configs/experiment4_heap_vs_noheap.json',
 #             './experiments/configs/experiment3_cs_vs_gurobi.json',
 #             './experiments/configs/experiment1_mixed.json']
+#    files = ['./experiments/configs/experiment6_ff_vs_cs.json']
     files = ['./experiments/configs/test_ride.json']
+
     for f in files:
         run_experiments(*parse_experiment_setup(f))
         print('done', f)

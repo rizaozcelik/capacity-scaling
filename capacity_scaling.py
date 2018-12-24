@@ -86,6 +86,23 @@ def get_max_flow(graph):
     return sum([flow for flow in adjacency_map.values()])
 
 #%%
+def solve_with_ford_fulkerson(graph, use_bfs=True):
+    deltas = [] 
+    path = True
+    while path:
+        # Find a path and capacity of this path
+        path, delta = find_path_from_source_to_target(graph, 1, use_bfs)
+        # Store deltas for further analysis
+        deltas.append(delta)
+        # If a path is found, just augment and update delta otherwise
+        if path:
+            augment(graph, path, delta, update_heap=False)
+        
+    # Just return the max flow as an integer
+    max_flow = get_max_flow(graph)
+    return int(max_flow), deltas, None
+
+#%%
 # This function is an implementation of capacity scaling that supports using
 # heap for Delta update and bfs/dfs for path finding.
 def solve_with_capacity_scaling(graph, use_heap=False, use_bfs=True):
