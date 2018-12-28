@@ -1,4 +1,4 @@
-## Capacity Scaling
+## Mamimum Flow 
 
 This repository contains various implementations of capacity scaling algorithm anl linear programming for maximum flow problem as well as their comparisons on different configurations. Here are the list of the versions
 
@@ -14,4 +14,4 @@ To test the code:
 * Install the requirements by pip or conda
 * Run runner.py with the existing configuration to see a quick test ride.
 
-You can also see the comparisons either by analyzing the notebook in the repo or checking out the pdf file. If you wish, you can add more experiments by simply adding a json file in the same format with the existing ones and running it from the runner.
+You can also see the comparisons either by checking out the pdf file. If you wish, you can add more experiments by simply adding a json file in the same format with the existing ones and running it from the runner.
