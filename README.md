@@ -1,4 +1,4 @@
-## Mamimum Flow 
+## Maximum Flow 
 
 This repository contains various implementations of capacity scaling algorithm anl linear programming for maximum flow problem as well as their comparisons on different configurations. Here are the list of the versions
 
